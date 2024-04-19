@@ -5,6 +5,12 @@
 
 using namespace plugin;
 
+enum RadarTraceHeight {
+	RADAR_TRACE_LOW,
+	RADAR_TRACE_HIGH,
+	RADAR_TRACE_NORMAL
+};
+
 class RadarMark {
 	static bool markExist;
 	static CVector markPosition;
@@ -21,6 +27,9 @@ public:
 				}
 				if (markExist) {
 					DrawMark(markPosition, 4, CRGBA(255, 0, 0));
+					CVector playerPosition = FindPlayerCentreOfWorld_NoSniperShift();
+					if (DistanceBetweenPoints(CVector(playerPosition.x, playerPosition.y, 0), CVector(markPosition.x, markPosition.y, 0)) < 10.0)
+						markExist = false;
 				}
 			};
 		
@@ -43,8 +52,14 @@ private:
 		CRadar::TransformRealWorldPointToRadarSpace(radarPosition, CVector2D(position.x, position.y));
 		CRadar::LimitRadarPoint(radarPosition);
 		CRadar::TransformRadarPointToScreenSpace(screenPosition, radarPosition);
-
-		CRadar::ShowRadarTraceWithHeight(screenPosition.x, screenPosition.y, size, color.r, color.g, color.b, color.a, 2);
+		CVector playerPosition = FindPlayerCentreOfWorld_NoSniperShift();
+		int mode = RADAR_TRACE_LOW;
+		if (position.z - playerPosition.z <= 2.0f)
+			if (position.z - playerPosition.z < -2.0f) mode = RADAR_TRACE_HIGH;
+			else mode = RADAR_TRACE_NORMAL;
+		if (size && mode != RADAR_TRACE_NORMAL)
+			size--;
+		CRadar::ShowRadarTraceWithHeight(screenPosition.x, screenPosition.y, size, color.r, color.g, color.b, color.a, mode);
 	}
 } RadarMarkPlugin;
 
