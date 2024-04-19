@@ -105,6 +105,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\source\Main.cpp" />
+    <ClCompile Include="..\source\Settings.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\source\Settings.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

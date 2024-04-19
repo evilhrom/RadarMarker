@@ -3,6 +3,8 @@
 #include "CRadar.h"
 #include "CWorld.h"
 
+#include "Settings.h"
+
 using namespace plugin;
 
 enum RadarTraceHeight {
@@ -16,6 +18,11 @@ class RadarMark {
 	static CVector markPosition;
 public:
     RadarMark() {
+
+		plugin::Events::initRwEvent += [] {
+			Settings::read();
+			};
+
 		plugin::Events::drawBlipsEvent += [] {
 				CPad* pad = CPad::GetPad(0);
 				bool rightMouseButtonClicked = pad->NewMouseControllerState.rmb && !pad->OldMouseControllerState.rmb;
@@ -26,9 +33,9 @@ public:
 					SetMark(crosshair);
 				}
 				if (markExist) {
-					DrawMark(markPosition, 4, CRGBA(255, 0, 0));
+					DrawMark(markPosition, Settings::size, Settings::color);
 					CVector playerPosition = FindPlayerCentreOfWorld_NoSniperShift();
-					if (DistanceBetweenPoints(CVector(playerPosition.x, playerPosition.y, 0), CVector(markPosition.x, markPosition.y, 0)) < 10.0)
+					if ((DistanceBetweenPoints(CVector(playerPosition.x, playerPosition.y, 0), CVector(markPosition.x, markPosition.y, 0)) < 10.0) && Settings::removeWhenNearby)
 						markExist = false;
 				}
 			};
