@@ -5,6 +5,7 @@
 class Settings {
 public: 
     static bool removeWhenNearby;
+    static bool drawMarker;
     static uint size;
     static CRGBA color;
 
